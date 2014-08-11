@@ -57,6 +57,7 @@
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Hull.io.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
