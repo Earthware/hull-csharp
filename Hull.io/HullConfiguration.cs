@@ -27,8 +27,6 @@
 
         public string OrgUrl { get; set; }
 
-        public string OrgSecret { get; set; }
-
         private void Validate()
         {
             if (string.IsNullOrEmpty(this.AppId))
