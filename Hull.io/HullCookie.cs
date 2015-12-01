@@ -7,6 +7,23 @@
 
     public class HullCookie
     {
+        public static string Generate(string userId, HullConfiguration configuration)
+        {
+            var signature = Utilities.BuildSignedUserId(userId, configuration.AppSecret);
+            var raw = new RawCookieData
+                          {
+                              AuthScope = "User:" + userId,
+                              UserId = userId,
+                              UserSig = signature
+                          };
+
+            var rawJson = JsonConvert.SerializeObject(raw);
+            var jsonBytes = Encoding.UTF8.GetBytes(rawJson);
+            var encodedData = Convert.ToBase64String(jsonBytes);
+
+            return encodedData;
+        }
+
         public HullCookie(string rawCookie, HullConfiguration configuration)
         {
             // Invalid by default

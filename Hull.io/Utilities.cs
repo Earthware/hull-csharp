@@ -1,6 +1,7 @@
 ﻿namespace Hull.io
 {
     using System;
+    using System.Globalization;
     using System.Linq;
     using System.Security.Cryptography;
     using System.Text;
@@ -10,6 +11,13 @@
     public static class Utilities
     {
         private static readonly DateTime JavascriptBaseTime = new DateTime(1970, 1, 1);
+
+        public static string BuildSignedUserId(string userId, string secret)
+        {
+            var timestamp = ((long)Math.Round(DateTime.UtcNow.Subtract(JavascriptBaseTime).TotalSeconds)).ToString(CultureInfo.InvariantCulture);
+            var digest = BuildHullDigest(userId, timestamp, secret);
+            return string.Concat(timestamp, ".", digest);
+        }
 
         public static bool CheckSignedUserId(string userId, string userSignature, string secret)
         {
@@ -38,14 +46,20 @@
             var time = signatureComponents[0];
             var signature = signatureComponents[1];
 
+            var digest = BuildHullDigest(userId, time, secret);
+
+            return digest == signature;
+        }
+
+        private static string BuildHullDigest(string userId, string time, string secret)
+        {
             var hmacsha1 = new HMACSHA1(Encoding.Default.GetBytes(secret));
 
             var hmacInput = string.Concat(time, "-", userId);
             var digestBytes = hmacsha1.ComputeHash(Encoding.Default.GetBytes(hmacInput));
 
             var digest = string.Join(string.Empty, digestBytes.Select(x => x.ToString("X2").ToLowerInvariant()));
-
-            return digest == signature;
+            return digest;
         }
 
         public static string SignUserData(object userData, string secret)
