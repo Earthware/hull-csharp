@@ -34,7 +34,7 @@
         public HullClient(HullConfiguration config)
         {
             this.config = config;
-            this.httpClient = new RestClient();
+            this.httpClient = new RestClient(this.config.OrgUrl);
         }
 
         public HullClient(string appId, string appSecret, string orgUrl)
@@ -57,7 +57,7 @@
                 path = "/" + path;
             }
             var rval = new StringBuilder();
-            rval.Append(this.config.OrgUrl).Append("/api/v1").Append(path);
+            rval.Append("/api/v1").Append(path);
             if (null != querystring && !string.IsNullOrEmpty(querystring))
             {
                 rval.Append("?").Append(querystring);
